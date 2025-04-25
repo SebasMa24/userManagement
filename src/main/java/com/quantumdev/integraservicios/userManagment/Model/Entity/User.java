@@ -9,9 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,30 +27,31 @@ import lombok.NoArgsConstructor;
 @Table(name = "app_user")
 public class User implements UserDetails{
     @Id
-    @Column(nullable = false, unique = true)
+    @Column(name="email_user", nullable = false, unique = true)
     String email;
 
-    @Column
+    @Column(name="pass_user", nullable = false)
     String password;
 
-    @Column(nullable = true)
+    @Column(name="code_user")
     String code;
 
-    @Column
+    @Column(name="name_user", nullable = false)
     String name;
 
-    @Column
+    @Column(name="phone_user", nullable = false)
     String phone;
 
-    @Column
+    @Column(name="address_user", nullable = false)
     String address;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "name_role")
     Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority((role.name())));
+        return List.of(new SimpleGrantedAuthority(role.getName().name()));
     }
     @Override
     public String getUsername() {
