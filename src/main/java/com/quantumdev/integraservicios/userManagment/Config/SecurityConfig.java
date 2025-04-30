@@ -10,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.quantumdev.integraservicios.userManagment.Jwt.JwtAuthenticationFilter;
+import com.quantumdev.integraservicios.userManagment.Model.Entity.ERole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,7 @@ public class SecurityConfig {
                         .csrf(csrf -> csrf.disable())
                         .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/auth/**").permitAll()
-                                .anyRequest().hasAuthority("ADMIN")
+                                .anyRequest().hasAuthority(ERole.ROLE_ADMIN.name())
                         )
                         .sessionManagement(sessionManager ->
                                 sessionManager

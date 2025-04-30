@@ -37,7 +37,7 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest request) {
-        Role userRole = roleRepository.findByName(ERole.USER)
+        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
         .orElseThrow(() -> new RuntimeException("Error: Role not found"));
         User user = User.builder()
             .email(request.getEmail())

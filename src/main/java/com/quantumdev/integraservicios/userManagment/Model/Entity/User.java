@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -24,30 +23,57 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "app_user")
+@Table(name = "AppUser")
 public class User implements UserDetails{
+
     @Id
-    @Column(name="email_user", nullable = false, unique = true)
-    String email;
+    @Column(
+        name = "email_user",
+        length = 64,
+        nullable = false
+    )
+    private String email;
 
-    @Column(name="pass_user", nullable = false)
-    String password;
+    @ManyToOne(
+        targetEntity = Role.class,
+        optional = false
+    )
+    @JoinColumn(
+        name = "role_user",
+        nullable = false
+    )
+    private Role role;
 
-    @Column(name="code_user")
-    String code;
+    @Column(
+        name = "pass_user",
+        length = 32,
+        nullable = false
+    )
+    private String password;
 
-    @Column(name="name_user", nullable = false)
-    String name;
+    @Column(name = "code_user")
+    private Long code;
 
-    @Column(name="phone_user", nullable = false)
-    String phone;
+    @Column(
+        name = "name_user",
+        length = 32,
+        nullable = false
+    )
+    private String name;
 
-    @Column(name="address_user", nullable = false)
-    String address;
+    @Column(
+        name = "phone_user",
+        nullable = false
+    )
+    private Long phone;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "name_role")
-    Role role;
+    @Column(
+        name = "address_user",
+        length = 64,
+        nullable = false
+    )
+    private String address;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
