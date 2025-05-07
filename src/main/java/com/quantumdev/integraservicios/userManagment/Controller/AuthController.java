@@ -1,5 +1,7 @@
 package com.quantumdev.integraservicios.userManagment.Controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,5 +29,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/setAdminRole")
+    public ResponseEntity<Void> setAdminRole(@RequestBody Map<String, Object> body) {
+        String email = (String) body.get("email");
+        boolean makeAdmin = (Boolean) body.get("makeAdmin");
+
+        authService.setAdminRole(email, makeAdmin);
+        return ResponseEntity.ok().build();
     }
 }

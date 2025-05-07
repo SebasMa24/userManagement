@@ -28,32 +28,65 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        UserDetails user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        String token=jwtService.getToken(user);
+        validateEmailFormat(request.getEmail());
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        UserDetails user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Error: User not found"));
+        String token = jwtService.getToken(user);
         return AuthResponse.builder()
                 .token(token)
                 .build();
     }
 
     public AuthResponse register(RegisterRequest request) {
+        validateEmailFormat(request.getEmail());
+        validatePhoneNumberFormat(request.getPhone());
+
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-        .orElseThrow(() -> new RuntimeException("Error: Role not found"));
+                .orElseThrow(() -> new RuntimeException("Error: Role not found"));
+
         User user = User.builder()
-            .email(request.getEmail())
-            .password(passwordEncoder.encode(request.getPassword()))
-            .code(request.getCode())
-            .name(request.getName())
-            .address(request.getAddress())
-            .phone(request.getPhone())
-            .role(userRole)
-            .build();
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .code(request.getCode())
+                .name(request.getName())
+                .address(request.getAddress())
+                .phone(request.getPhone())
+                .role(userRole)
+                .build();
 
         userRepository.save(user);
 
         return AuthResponse.builder()
-            .token(jwtService.getToken(user))
-            .build();
+                .token(jwtService.getToken(user))
+                .build();
     }
 
+    public void setAdminRole(String email, boolean makeAdmin) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Error: User not found"));
+
+        ERole targetRole = makeAdmin ? ERole.ROLE_ADMIN : ERole.ROLE_USER;
+
+        Role adminRole = roleRepository.findByName(targetRole)
+                .orElseThrow(() -> new RuntimeException("Error: role not found: " + targetRole));
+
+        user.setRole(adminRole);
+        userRepository.save(user);
+    }
+
+    private void validateEmailFormat(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        if (email == null || !email.matches(emailRegex)) {
+            throw new IllegalArgumentException("Error: the email " + email + " is invalid");
+        }
+    }
+
+    private void validatePhoneNumberFormat(Long phone) {
+        String phoneStr = String.valueOf(phone);
+        if (phoneStr.length() < 7 || phoneStr.length() > 15) {
+            throw new IllegalArgumentException("Error: the phone" + phone + " is invalid");
+        }
+    }
 }
