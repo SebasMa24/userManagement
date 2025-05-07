@@ -63,19 +63,6 @@ public class AuthService {
                 .build();
     }
 
-    public void setAdminRole(String email, boolean makeAdmin) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Error: User not found"));
-
-        ERole targetRole = makeAdmin ? ERole.ROLE_ADMIN : ERole.ROLE_USER;
-
-        Role adminRole = roleRepository.findByName(targetRole)
-                .orElseThrow(() -> new RuntimeException("Error: role not found: " + targetRole));
-
-        user.setRole(adminRole);
-        userRepository.save(user);
-    }
-
     private void validateEmailFormat(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         if (email == null || !email.matches(emailRegex)) {

@@ -30,13 +30,4 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
-
-    @PostMapping("/setAdminRole")
-    public ResponseEntity<Void> setAdminRole(@RequestBody Map<String, Object> body) {
-        String email = (String) body.get("email");
-        boolean makeAdmin = (Boolean) body.get("makeAdmin");
-
-        authService.setAdminRole(email, makeAdmin);
-        return ResponseEntity.ok().build();
-    }
 }
