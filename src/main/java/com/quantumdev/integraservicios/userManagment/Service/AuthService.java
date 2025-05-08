@@ -43,6 +43,15 @@ public class AuthService {
         validateEmailFormat(request.getEmail());
         validatePhoneNumberFormat(request.getPhone());
 
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("El correo electrónico ya está registrado");
+        }
+        
+        // Verificar si el código universitario ya está registrado
+        if (userRepository.existsByCode(request.getCode())) {
+            throw new RuntimeException("El código universitario ya está registrado");
+        }
+
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role not found"));
 
