@@ -82,7 +82,7 @@ public class AuthService {
     private void validatePhoneNumberFormat(Long phone) {
         String phoneStr = String.valueOf(phone);
         if (phoneStr.length() < 7 || phoneStr.length() > 15) {
-            throw new IllegalArgumentException("Error: the phone" + phone + " is invalid");
+            throw new IllegalArgumentException("Error: the phone " + phone + " is invalid");
         }
     }
 }
