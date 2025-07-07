@@ -44,12 +44,12 @@ public class AuthService {
         validatePhoneNumberFormat(request.getPhone());
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El correo electrónico ya está registrado");
+            throw new IllegalArgumentException("El correo electrónico ya está registrado");
         }
         
         // Verificar si el código universitario ya está registrado
-        if (userRepository.existsByCode(request.getCode())) {
-            throw new RuntimeException("El código universitario ya está registrado");
+        if (request.getCode() != null && userRepository.existsByCode(request.getCode())) {
+            throw new IllegalArgumentException("El código universitario ya está registrado");
         }
 
         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
